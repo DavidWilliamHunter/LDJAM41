@@ -1,0 +1,116 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>Phaser - Making your first game, part 1</title>
+    <script src="//cdn.jsdelivr.net/phaser/2.6.1/phaser.js"></script>
+	<script src="Zombies.js"></script>
+	<script src="Town.js"></script>
+	<script src="GameState.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render : render });
+
+var gameState = new GameState;
+var zombies = new Zombies;
+var town = new Town;
+var playing = false;
+
+var tauntCoolDown = 0;
+var tauntInterval = 50000;
+
+function preload() {
+	/*
+	 * Tycoon assets
+	 */ 
+	
+	gameState.preload();
+	zombies.preload();
+	town.preload();
+	
+	/**
+	* Load Taunts
+	*/
+	
+	game.load.audio('Intro', 'assets/Intro.mp3');
+	game.load.audio('Taunt0', 'assets/AngryZombies.mp3');
+	game.load.audio('Taunt1', 'assets/BaseInThisPlace.mp3');
+	game.load.audio('Taunt2', 'assets/BloodOnTheDanceFloor.mp3');
+	game.load.audio('Taunt3', 'assets/BrainsInTheAir.mp3');
+	game.load.audio('Taunt4', 'assets/DanceMoves.mp3');
+	game.load.audio('Taunt5', 'assets/GetDown.mp3');
+	game.load.audio('Taunt6', 'assets/OverWelmed.mp3');
+	game.load.audio('Taunt7', 'assets/ZombiesAreComing.mp3');
+
+}
+
+var intro_sound;
+var taunts;
+
+function create() {
+    //  We're going to be using physics, so enable the Arcade Physics system
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+	
+	//zombies.create(); moved to gameState
+	//town.create();
+	gameState.create();
+	
+	game.input.onDown.add(click);
+	
+	// load sounds
+	intro_sound = game.add.audio('Intro');
+	taunts = new Array();
+	taunts.push(game.add.audio('Taunt0'));
+	taunts.push(game.add.audio('Taunt1'));
+	taunts.push(game.add.audio('Taunt2'));
+	taunts.push(game.add.audio('Taunt3'));
+	taunts.push(game.add.audio('Taunt4'));
+	taunts.push(game.add.audio('Taunt5'));
+	taunts.push(game.add.audio('Taunt6'));
+	taunts.push(game.add.audio('Taunt7'));
+	
+	tauntCoolDown = game.time.now + tauntInterval;
+	
+	intro_sound.play();
+}
+
+function update() {
+	playing = true;
+    //game.physics.arcade.overlap(zombies, zombies, collisionHandler, null, this);
+	gameState.update();
+	zombies.update()
+	town.update()
+	
+	game.physics.arcade.overlap(zombies.phaserGroup, town.houseGroup, zombies.collisionHandler, null, this);
+	game.physics.arcade.overlap(zombies.phaserGroup, town.playerObjsGroup, zombies.collisionHandler, null, this);
+	
+	if(tauntCoolDown <= game.time.now)
+	{
+		tauntCoolDown = game.time.now + tauntInterval;
+		taunt = game.rnd.integerInRange(0, taunts.length-1);
+		taunts[taunt].play();
+	}
+}
+
+function render() {
+	zombies.render();
+	town.render();
+	gameState.render();
+}
+
+function click(pointer) {
+	zombies.click(pointer);
+}
+
+</script>
+
+</body>
+</html>

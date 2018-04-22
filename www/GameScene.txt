@@ -1,0 +1,28 @@
+class GameScene extends Phaser.Scene {
+    constructor() {
+        super({
+            key: 'GameScene',
+            physics: {
+                system: 'impact',
+                gravity: 100,
+                setBounds: {
+                    width: 800,
+                    height: 600,
+                }
+            }
+        });
+    }
+
+    preload() {
+        this.load.image('mushroom', './assets/images/mushroom2.png')
+
+    }
+
+    create() {
+
+        this.mushroom = this.physics.add.image(300, 300, 'mushroom').setActive().setVelocity(0, 0).setBounce(0);
+
+    }
+}
+
+export default GameScene;
