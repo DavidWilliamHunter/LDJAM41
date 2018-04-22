@@ -465,6 +465,8 @@ class DanceFloor extends Venue
 		//this.addChild(this.boom);
 		this.boom.bringToTop();
 		
+		this.noSongCoolDownTime = 25000;
+		this.restartTunes = 0;
 
 	}
 	
@@ -472,7 +474,21 @@ class DanceFloor extends Venue
 	{
 		this.songTimeRemaining -= game.time.elapsed;
 		if(this.songTimeRemaining<0)
+		{
 			this.songTimeRemaining = 0;
+			if(this.restartTunes==0)
+			{
+				this.boom.kill();
+				this.restartTunes = game.time.now + this.noSongCoolDownTime;
+			} else {
+				if(this.restartTunes <= game.time.now)
+				{
+					this.boom.Revive();
+					this.reset();
+				}
+			}				
+		}
+		
 		this.healthBar.currentHealth = this.healthBar.maxHealth * this.songCapacity / this.songTimeRemaining;
 
 		this.boom.update()
@@ -490,8 +506,10 @@ class DanceFloor extends Venue
 		this.effectiveRange = 350;
 		this.songCapacity = 100000;
 		this.songTimeRemaining = 100000;
-		this.resellValue = 2.5;
+		this.resellValue = 0.25;
 		this.danceDamage = 2.5;
+		this.restartTunes = 0;
+		
 	}
 		
 	hasDrinks()

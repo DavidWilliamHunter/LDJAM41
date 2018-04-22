@@ -356,7 +356,7 @@ class UnHealthyPotionMenuItem extends MenuBarItem
 		{
 			if(gameState.spend(50))
 			{
-				this.targetBar.addDrink('UnHealthyPotion', 100, 10, 1.5);			
+				this.targetBar.addDrink('UnHealthyPotion', 100, 10, 3);			
 			}
 		} 
 		this.x = this.startLocX;
